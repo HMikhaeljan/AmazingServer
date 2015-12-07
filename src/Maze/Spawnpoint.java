@@ -7,8 +7,15 @@ package Maze;
 
 /**
  *
- * @author Hovsep
+ * @author Robin
  */
-public class Spawnpoint {
-    
+public class SpawnPoint 
+{
+    public final int x;
+    public final int y;
+    public SpawnPoint(int x, int y)
+    {
+        this.x =x;
+        this.y =y;
+    }
 }
