@@ -5,6 +5,7 @@
  */
 package Interfaces;
 
+import GamePackage.Player;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -18,5 +19,5 @@ public interface IGame extends Remote{
 
     public Block[][] getGrid() throws RemoteException;
 
-    public List<IPlayer> getPlayers() throws RemoteException;
+    public List<Player> getPlayers() throws RemoteException;
 }

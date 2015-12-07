@@ -23,7 +23,6 @@ public class Game extends UnicastRemoteObject implements IGame {
     private BasicPublisher publisher; 
     private int gameID;
     private int gameState;
-    private List<IPlayer> Iplayers;
     private List<Player> players;
 
     /**
@@ -73,7 +72,7 @@ public class Game extends UnicastRemoteObject implements IGame {
     }
 
     @Override
-    public List<IPlayer> getPlayers() throws RemoteException {
-        return Iplayers;
+    public List<Player> getPlayers() throws RemoteException {
+        return players;
     }
 }

@@ -13,14 +13,14 @@ import java.util.List;
  * @author Hovsep
  */
 public class GameState implements Serializable{
-    List<Player> player;
+    List<Player> players;
     List<Used> abilities;
     List<String> messages;
     
     
     
-    public GameState(List<Player> player, List<Used> abilities, List<String> messages ){
-        this.player = player;
+    public GameState(List<Player> players, List<Used> abilities, List<String> messages ){
+        this.players = players;
         this.abilities = abilities;
         this.messages = messages;
     }

@@ -15,7 +15,7 @@ public class User implements Serializable {
 
     private int userID;
     private String name;
-    private String email;
+    private String password;
     private Stat stats;
 
     /**
@@ -26,13 +26,16 @@ public class User implements Serializable {
      * @param email Cannot be null.
      * @param stats can be null.
      */
-    public User(int userID, String name, String email, Stat stats) {
+    public User(int userID, String name, String password, Stat stats) {
         this.userID = userID;
         this.name = name;
-        this.email = email;
+        this.password = password;
         this.stats = stats;
     }
 
+    public Stat getStats(){
+        return stats;
+    }
     public int getStatID() {
         return stats.getStatsID();
     }
@@ -45,45 +48,17 @@ public class User implements Serializable {
         return name;
     }
 
-    public String getEmail() {
-        return email;
+    public String getPassword() {
+        return password;
     }
 
     public String setName(String name) {
         return this.name = name;
     }
 
-    public String setEmail(String Email) {
-        return this.email = Email;
+    public String setEmail(String password) {
+        return this.password = password;
     }
-
-    /**
-     * Login method for verifying user. Checks in database if name and password
-     * has correspondig account. if User exist then return user with
-     * corresponding stats
-     *
-     * @param name
-     * @param password
-     * @return User if account exists otherwise return null.
-     */
-    public User login(String name, String password) {
-        return null;
-    }
-
-    /**
-     * Create account Creates an account in the database.
-     *
-     * @param userid cannot not be null and must be unique.
-     * @param name cannot not be null and must be unique.
-     * @param password cannot not be null.
-     * @param email cannot be null.
-     * @param stats cannot be null.
-     * @return true if succesfully added in database.
-     */
-    public Boolean createAccount(String userid, String name, String password, String email, Stat stats) {
-        return null;
-    }
-
     /**
      * Changes stats after a game ended.
      *
