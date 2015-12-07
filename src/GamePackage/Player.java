@@ -5,6 +5,9 @@
  */
 package GamePackage;
 
+import Interfaces.IPlayer;
+import java.io.Serializable;
+import java.rmi.RemoteException;
 import javafx.application.Platform;
 import javafx.scene.Node;
 import javafx.scene.image.ImageView;
@@ -13,7 +16,7 @@ import javafx.scene.image.ImageView;
  *
  * @author Hovsep
  */
-public class Player {
+public class Player implements Serializable, IPlayer{
 
 	private int ID;
 	private int hitpoints;
@@ -108,5 +111,25 @@ public class Player {
         });
             System.out.println("Someone got killedd!");
         }
+
+    @Override
+    public Double getX() throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Double getY() throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getHitpoints() throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Boolean getReady() throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
 }

@@ -5,7 +5,10 @@
  */
 package GamePackage;
 
+import Interfaces.IAbility;
 import Maze.Block;
+import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.animation.AnimationTimer;
@@ -20,7 +23,7 @@ import javafx.scene.input.KeyCode;
  *
  * @author Hovsep
  */
-public class Ability {
+public class Ability implements Serializable, IAbility{
 
     static final int spritesize = 16;
 
@@ -59,6 +62,22 @@ public class Ability {
         return name;
     }
 
+    @Override
+    public Double getX() throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Double getY() throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getCreatorID() throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    
     private class AnimTask extends AnimationTimer {
 
         double curY;

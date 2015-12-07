@@ -5,6 +5,8 @@
  */
 package Interfaces;
 
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.List;
 import jdk.nashorn.internal.ir.Block;
 
@@ -12,15 +14,9 @@ import jdk.nashorn.internal.ir.Block;
  *
  * @author Hovsep
  */
-public class IGame {
+public interface IGame extends Remote{
 
-    public Block[][] getGrid() {
-        return null;
-    }
+    public Block[][] getGrid() throws RemoteException;
 
-    public List<IPlayer> getPlayers() {
-        return null;
-    }
-    
-    
+    public List<IPlayer> getPlayers() throws RemoteException;
 }
