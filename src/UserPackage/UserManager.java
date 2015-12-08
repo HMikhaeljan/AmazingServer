@@ -90,6 +90,7 @@ public class UserManager extends UnicastRemoteObject implements ILogin {
                 if (user.getName().equals(username) && user.getPassword().equals(password)) {
 
                     System.out.println("User " + user.getName() + " has logged in");
+                    addToOnline(user);
                     return user;
                 }
 

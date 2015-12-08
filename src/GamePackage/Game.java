@@ -38,6 +38,7 @@ public class Game extends UnicastRemoteObject implements IGame {
         this.gameID = gameID;
         this.maze = new Maze(40, 2, 128);
         spawnpoints = maze.getSpawnpoints();
+        maze.printMaze();
     }
     
     public int getGameID() {

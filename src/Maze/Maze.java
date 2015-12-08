@@ -60,7 +60,7 @@ public class Maze {
         this.sprites = new ArrayList<Image>();
         this.spawnPoints = new ArrayList<SpawnPoint>();
         
-        sprites.add(Sprite.LoadSprite("Resources/WallSprite.jpg", 16, 16));
+        //sprites.add(Sprite.LoadSprite("Resources/WallSprite.jpg", 16, 16));
         
         
         //Starting off with nothing
@@ -193,12 +193,12 @@ public class Maze {
     private void drawRoom(Room r)
     {
         Rectangle rec = r.area;
-        System.out.println("Starting draw");
+        //System.out.println("Starting draw");
         for(int y=rec.y; y<rec.y+rec.height; y++)
         {
             for(int x= rec.x; x<rec.x+rec.width; x++)
             {
-                System.out.println("Grid X:" + x + " Y:" + y);
+                //System.out.println("Grid X:" + x + " Y:" + y);
                 if(r.edge)
                 {
                     grid[y][x] = Block.EDGE;
@@ -403,7 +403,7 @@ public class Maze {
     {
         int width= newRand(roomSize);
         int height = newRand(roomSize);
-        System.out.println("W:" + width + " H:" + height);
+        //System.out.println("W:" + width + " H:" + height);
         Room r = new Room(1+newRand(gridSize-width-2), 1+newRand(gridSize-height-2), 2+width, 2+height, false);
         return r;
     }
