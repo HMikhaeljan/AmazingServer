@@ -3,11 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Hovsep/Documents/NetBeansProjects/AmazingServer/src/UserPackage/Stat.java</file>
-            <file>file:/C:/Users/Hovsep/Documents/NetBeansProjects/AmazingServer/src/Database/DatabaseConnection.java</file>
-            <file>file:/C:/Users/Hovsep/Documents/NetBeansProjects/AmazingServer/src/Database/DatabaseReader.java</file>
-            <file>file:/C:/Users/Hovsep/Documents/NetBeansProjects/AmazingServer/src/GamePackage/Ability.java</file>
-            <file>file:/C:/Users/Hovsep/Documents/NetBeansProjects/AmazingServer/src/GamePackage/Game.java</file>
+            <file>file:/D:/Project/AmazingServer/src/GamePackage/Game.java</file>
+            <file>file:/D:/Project/AmazingServer/src/amazingserver/AmazingServer.java</file>
+            <file>file:/D:/Project/AmazingServer/src/UserPackage/User.java</file>
+            <file>file:/D:/Project/AmazingServer/src/Interfaces/IAbility.java</file>
+            <file>file:/D:/Project/AmazingServer/src/UserPackage/UserManager.java</file>
+            <file>file:/D:/Project/AmazingServer/src/GamePackage/Ability.java</file>
+            <file>file:/D:/Project/AmazingServer/src/GamePackage/GameManager.java</file>
         </group>
     </open-files>
 </project-private>
