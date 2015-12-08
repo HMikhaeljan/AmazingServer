@@ -5,7 +5,8 @@
  */
 package Database;
 
-import UserPackage.User;
+
+import amazingsharedproject.User;
 import java.sql.*;
 
 /**

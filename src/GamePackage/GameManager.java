@@ -7,8 +7,8 @@ package GamePackage;
 
 import amazingsharedproject.Interfaces.IGame;
 import amazingsharedproject.Interfaces.IGameManager;
-import UserPackage.User;
 import UserPackage.UserManager;
+import amazingsharedproject.User;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;

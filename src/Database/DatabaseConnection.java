@@ -9,6 +9,8 @@ import GamePackage.*;
 import UserPackage.*;
 import amazingsharedproject.Ability;
 import amazingsharedproject.PlayerRole;
+import amazingsharedproject.Stat;
+import amazingsharedproject.User;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

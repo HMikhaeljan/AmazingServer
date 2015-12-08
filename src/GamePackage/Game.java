@@ -7,7 +7,6 @@ package GamePackage;
 
 import Maze.Maze;
 import Maze.SpawnPoint;
-import UserPackage.User;
 import amazingsharedproject.GameState;
 import amazingsharedproject.Interfaces.IGame;
 import amazingsharedproject.Player;

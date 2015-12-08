@@ -14,6 +14,7 @@ import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.sql.SQLException;
 import java.util.Enumeration;
 
 /**
@@ -33,7 +34,7 @@ public class AmazingServer {
     private GameManager gmanager;
 
     // Constructor
-    public AmazingServer() {
+    public AmazingServer() throws SQLException {
         
         // Print port number for registry
         System.out.println("Server: Port number " + portNumber);  
@@ -103,7 +104,7 @@ public class AmazingServer {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws RemoteException {
+    public static void main(String[] args) throws RemoteException, SQLException {
 
         // Welcome message
         System.out.println("SERVER USING REGISTRY");

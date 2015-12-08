@@ -6,7 +6,9 @@
 package UserPackage;
 
 import Database.DatabaseConnection;
-import Interfaces.ILogin;
+import amazingsharedproject.Interfaces.ILogin;
+import amazingsharedproject.Stat;
+import amazingsharedproject.User;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.List;
@@ -22,19 +24,18 @@ import java.util.ArrayList;
 public class UserManager extends UnicastRemoteObject implements ILogin {
 
     DatabaseConnection db = new DatabaseConnection();
-    List<User> onlineUsers = new ArrayList<User>() {
-    };
-    List<User> allUsers;
+    List<User> onlineUsers = new ArrayList<User>();
+    List<User> allUsers = new ArrayList<User>();
     User newuser;
     Stat stat;
 
-    public UserManager() throws RemoteException {
+    public UserManager() throws RemoteException, SQLException {
+        loadAllUsers();
     }
 
     public void loadAllUsers() throws SQLException {
         for (User user : db.getUsers()) {
-            newuser = new User(user.getUserID(), user.getName(), user.getPassword(), user.getStats());
-            allUsers.add(newuser);
+            allUsers.add(user);
         }
 
     }
@@ -67,6 +68,10 @@ public class UserManager extends UnicastRemoteObject implements ILogin {
         }
     }
 
+    public void addToOnline(User user) {
+        onlineUsers.add(user);
+    }
+
     /**
      * Login method for verifying user. Checks in database if name and password
      * has correspondig account. if User exist then return user with
@@ -83,7 +88,8 @@ public class UserManager extends UnicastRemoteObject implements ILogin {
         try {
             for (User user : db.getUsers()) {
                 if (user.getName().equals(username) && user.getPassword().equals(password)) {
-                    onlineUsers.add(user);
+
+                    System.out.println("User " + user.getName() + " has logged in");
                     return user;
                 }
 
