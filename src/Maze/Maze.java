@@ -4,8 +4,7 @@
  * and open the template in the editor.
  */
 package Maze;
-
-import GamePackage.Sprite;
+import amazingsharedproject.Sprite;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -5,11 +5,12 @@
  */
 package GamePackage;
 
-import Interfaces.IGame;
-import Interfaces.IGameManager;
+import amazingsharedproject.Interfaces.IGame;
+import amazingsharedproject.Interfaces.IGameManager;
 import UserPackage.User;
 import UserPackage.UserManager;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 import jdk.nashorn.internal.ir.Block;
@@ -18,12 +19,12 @@ import jdk.nashorn.internal.ir.Block;
  *
  * @author Hovsep
  */
-public class GameManager implements IGameManager{
+public class GameManager extends UnicastRemoteObject implements IGameManager {
     
     private ArrayList<Game> activeGames;
     private UserManager umanager;
     
-    public GameManager(UserManager umanager) {
+    public GameManager(UserManager umanager) throws RemoteException {
         this.activeGames = new ArrayList<Game> ();
         this.umanager = umanager;
         

@@ -5,10 +5,9 @@
  */
 package amazingserver;
 
-import GamePackage.Game;
-import Interfaces.IGame;
-import Interfaces.IGameManager;
-import fontys.observer.BasicPublisher;
+import GamePackage.GameManager;
+import UserPackage.UserManager;
+import amazingsharedproject.Interfaces.IGameManager;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -57,8 +56,10 @@ public class AmazingServer {
 
         // Bind mEFB using registry
         try {
-            gmanager = new GameManager();
-            registry.rebind(bindingName, (IGameManager) gmanager);
+            UserManager umanager = new UserManager();
+            registry.rebind("UserManager", umanager);
+            GameManager gmanager = new GameManager(umanager);
+            registry.rebind("GameManager", gmanager);
         } catch (RemoteException ex) {
             System.out.println("Server: Cannot bind mEFB");
             System.out.println("Server: RemoteException: " + ex.getMessage());

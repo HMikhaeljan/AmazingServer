@@ -7,6 +7,8 @@ package Database;
 
 import GamePackage.*;
 import UserPackage.*;
+import amazingsharedproject.Ability;
+import amazingsharedproject.PlayerRole;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

@@ -5,10 +5,8 @@
  */
 package GamePackage;
 
-import Interfaces.IGame;
-import Interfaces.IPlayer;
-import fontys.observer.BasicPublisher;
-import fontys.observer.RemotePropertyListener;
+import amazingsharedproject.Interfaces.IGame;
+import amazingsharedproject.Player;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
