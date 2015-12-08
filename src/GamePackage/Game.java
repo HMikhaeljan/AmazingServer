@@ -5,11 +5,17 @@
  */
 package GamePackage;
 
+import Maze.Maze;
+import Maze.SpawnPoint;
+import UserPackage.User;
+import amazingsharedproject.GameState;
 import amazingsharedproject.Interfaces.IGame;
 import amazingsharedproject.Player;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.input.KeyCode;
 import jdk.nashorn.internal.ir.Block;
 
 /**
@@ -19,6 +25,10 @@ import jdk.nashorn.internal.ir.Block;
 public class Game extends UnicastRemoteObject implements IGame {
     private int gameID;
     private List<Player> players;
+    
+    private Maze maze;
+    private ArrayList<SpawnPoint> spawnpoints;
+    private int spriteSize = 16;
 
     /**
      *
@@ -27,47 +37,45 @@ public class Game extends UnicastRemoteObject implements IGame {
      */
     public Game(int gameID) throws RemoteException {
         this.gameID = gameID;
+        this.maze = new Maze(40, 2, 128);
+        spawnpoints = maze.getSpawnpoints();
     }
     
     public int getGameID() {
         return gameID;
     }
-
-
-    /**
-     *
-     * @return players
-     */
-
-
-    /**
-     * Adds a player to the game
-     *
-     * @param player
-     */
-    public void addPlayer(Player player) {
-
-        players.add(player);
-    }
-
-    /**
-     * Check if the players in the game are ready to start. if all players are
-     * ready return true else return false.
-     *
-     * @param players
-     */
-    public boolean checkReady(List<Player> players) {
-        // TODO - implement Game.checkReady
-        throw new UnsupportedOperationException();
+    
+    public Player addPlayer(int userid) {
+        Player p = new Player(userid, players.size(), 100, -1);
+        players.add(p);
+        return p;
     }
 
     @Override
-    public Block[][] getGrid() throws RemoteException {
+    public GameState getGameState() throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public List<Player> getPlayers() throws RemoteException {
-        return players;
+    public void handleInput(int playerid, List<KeyCode> keys) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Player getPlayer(int userid) throws RemoteException {
+        
+        for(Player p : players) {
+            if(p.getUserID() == userid) {
+                return p;
+            }
+        }
+        Player p = new Player(userid, players.size(), 100, -1);
+        players.add(p);
+        return p;
+    }
+
+    @Override
+    public amazingsharedproject.Block[][] getGrid() throws RemoteException {
+        return maze.GetGrid();
     }
 }

@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package Maze;
+import amazingsharedproject.Block;
 import amazingsharedproject.Sprite;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -98,6 +99,10 @@ public class Maze {
         drawHallways(3);
         
         placeSpawnPoints(4);
+    }
+    
+    public ArrayList<SpawnPoint> getSpawnpoints() {
+        return spawnPoints;
     }
     
     private void addMapEdges()
