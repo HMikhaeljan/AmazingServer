@@ -7,7 +7,6 @@ package amazingserver;
 
 import GamePackage.GameManager;
 import UserPackage.UserManager;
-import amazingsharedproject.Interfaces.IGameManager;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;

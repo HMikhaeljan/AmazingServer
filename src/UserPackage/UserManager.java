@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 
 /**
  *
@@ -21,13 +22,13 @@ import java.rmi.server.UnicastRemoteObject;
 public class UserManager extends UnicastRemoteObject implements ILogin {
 
     DatabaseConnection db = new DatabaseConnection();
-    List<User> onlineUsers;
+    List<User> onlineUsers = new ArrayList<User>() {
+    };
     List<User> allUsers;
     User newuser;
     Stat stat;
 
-
-    public UserManager() throws RemoteException{
+    public UserManager() throws RemoteException {
     }
 
     public void loadAllUsers() throws SQLException {
@@ -43,7 +44,6 @@ public class UserManager extends UnicastRemoteObject implements ILogin {
     }
 
     //vraag alle online users op
-
     public List<User> getOnlineUsers() {
         return onlineUsers;
     }
@@ -86,6 +86,7 @@ public class UserManager extends UnicastRemoteObject implements ILogin {
                     onlineUsers.add(user);
                     return user;
                 }
+
             }
         } catch (SQLException ex) {
             Logger.getLogger(UserManager.class.getName()).log(Level.SEVERE, null, ex);
