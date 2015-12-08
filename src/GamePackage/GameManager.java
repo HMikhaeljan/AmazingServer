@@ -46,6 +46,7 @@ public class GameManager extends UnicastRemoteObject implements IGameManager {
         Game game = null;
         try{
             game = new Game(activeGames.size());
+            activeGames.add(game);
         } catch(RemoteException e) {
             System.out.println(e.getMessage());
         }

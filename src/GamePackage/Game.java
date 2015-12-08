@@ -23,7 +23,7 @@ import jdk.nashorn.internal.ir.Block;
  */
 public class Game extends UnicastRemoteObject implements IGame {
     private int gameID;
-    private List<Player> players;
+    private ArrayList<Player> players;
     
     private Maze maze;
     private ArrayList<SpawnPoint> spawnpoints;
@@ -38,9 +38,11 @@ public class Game extends UnicastRemoteObject implements IGame {
         this.gameID = gameID;
         this.maze = new Maze(40, 2, 128);
         spawnpoints = maze.getSpawnpoints();
-        maze.printMaze();
+        //maze.printMaze();
+        players = new ArrayList<Player>();
     }
     
+    @Override
     public int getGameID() {
         return gameID;
     }
@@ -69,6 +71,7 @@ public class Game extends UnicastRemoteObject implements IGame {
                 return p;
             }
         }
+        System.out.println("Bananen zijn cool");
         Player p = new Player(userid, players.size(), 100, -1);
         players.add(p);
         return p;
