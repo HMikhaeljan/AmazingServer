@@ -19,10 +19,7 @@ import jdk.nashorn.internal.ir.Block;
  * @author Hovsep
  */
 public class Game extends UnicastRemoteObject implements IGame {
-
-    private BasicPublisher publisher; 
     private int gameID;
-    private int gameState;
     private List<Player> players;
 
     /**
@@ -30,14 +27,14 @@ public class Game extends UnicastRemoteObject implements IGame {
      * @param gameID
      * @param gameState
      */
-    public Game(int gameID, int gameState) throws RemoteException {
+    public Game(int gameID) throws RemoteException {
         this.gameID = gameID;
-        this.gameState = gameState;
+    }
+    
+    public int getGameID() {
+        return gameID;
     }
 
-    public void addListener(RemotePropertyListener RPL, String property) {
-        publisher.addListener(RPL, property);
-    }
 
     /**
      *

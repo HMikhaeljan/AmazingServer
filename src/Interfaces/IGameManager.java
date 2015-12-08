@@ -13,5 +13,8 @@ import java.rmi.Remote;
  */
 public interface IGameManager extends Remote{
     
+    public IGame newLobby(int userid);
+    public IGame joinLobby(int gameid, int userid);
+    
     
 }

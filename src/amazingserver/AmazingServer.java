@@ -7,6 +7,7 @@ package amazingserver;
 
 import GamePackage.Game;
 import Interfaces.IGame;
+import Interfaces.IGameManager;
 import fontys.observer.BasicPublisher;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -26,12 +27,12 @@ public class AmazingServer {
     private static final int portNumber = 1099;
 
     // Set binding name for mEFB
-    private static final String bindingName = "Test";
+    private static final String bindingName = "gameManager";
 
     // References to registry and mEFB
     private Registry registry = null;
     
-    private BasicPublisher publisher;
+    private GameManager gmanager;
 
     // Constructor
     public AmazingServer() {
@@ -39,10 +40,11 @@ public class AmazingServer {
         // Print port number for registry
         System.out.println("Server: Port number " + portNumber);  
         
+        /*
         String[] properties = new String[1];
         properties[0] = "Refresh";
         publisher = new BasicPublisher(properties);
-
+        */
         // Create registry at port number
         try {
             registry = LocateRegistry.createRegistry(portNumber);
@@ -55,8 +57,8 @@ public class AmazingServer {
 
         // Bind mEFB using registry
         try {
-            IGame game = new Game(1,1){};
-            registry.rebind(bindingName, game);
+            gmanager = new GameManager();
+            registry.rebind(bindingName, (IGameManager) gmanager);
         } catch (RemoteException ex) {
             System.out.println("Server: Cannot bind mEFB");
             System.out.println("Server: RemoteException: " + ex.getMessage());
