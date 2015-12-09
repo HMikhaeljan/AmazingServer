@@ -68,6 +68,16 @@ public class ConTest {
         Player phovsep = gamehovsep.getPlayer(nephovsep.getUserID());
         System.out.println("Player retrieved. PlayerID: " + phovsep.getID());
         
+        //Testing the ready system
+        System.out.println("Testing the ready system: ");
+        game.setReady(p.getID(), true);
+        game.setReady(p.getID(), false);
+        
+        //Start game (both ready, check server log)
+        game.setReady(phovsep.getID(), true);
+        game.setReady(p.getID(), true);
+        System.out.println("Game started! (check server log)");
+        
         Block[][] grid = game.getGrid();
         System.out.println(grid.length);
         //printMaze(grid);

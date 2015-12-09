@@ -10,6 +10,7 @@ import Maze.SpawnPoint;
 import amazingsharedproject.GameState;
 import amazingsharedproject.Interfaces.IGame;
 import amazingsharedproject.Player;
+import amazingsharedproject.Used;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -23,7 +24,11 @@ import jdk.nashorn.internal.ir.Block;
  */
 public class Game extends UnicastRemoteObject implements IGame {
     private int gameID;
+    
+    //GameState:
     private ArrayList<Player> players;
+    private ArrayList<Used> usedAbilities;
+    private ArrayList<String> messages;
     
     private Maze maze;
     private ArrayList<SpawnPoint> spawnpoints;
@@ -40,22 +45,20 @@ public class Game extends UnicastRemoteObject implements IGame {
         spawnpoints = maze.getSpawnpoints();
         //maze.printMaze();
         players = new ArrayList<Player>();
+        usedAbilities = new ArrayList<Used>();
+        messages = new ArrayList<String>();
     }
     
     @Override
     public int getGameID() {
         return gameID;
     }
-    
-    public Player addPlayer(int userid) {
-        Player p = new Player(userid, players.size(), 100, -1);
-        players.add(p);
-        return p;
-    }
 
     @Override
     public GameState getGameState() throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        GameState gs = new GameState(players, usedAbilities, messages);
+        //List<Player> players, List<Used> abilities, List<String> messages
+        return gs;
     }
 
     @Override
@@ -71,7 +74,7 @@ public class Game extends UnicastRemoteObject implements IGame {
                 return p;
             }
         }
-        System.out.println("Bananen zijn cool");
+        //System.out.println("Bananen zijn cool");
         Player p = new Player(userid, players.size(), 100, -1);
         players.add(p);
         return p;
@@ -80,5 +83,23 @@ public class Game extends UnicastRemoteObject implements IGame {
     @Override
     public amazingsharedproject.Block[][] getGrid() throws RemoteException {
         return maze.GetGrid();
+    }
+
+    @Override
+    public void setReady(int playerid, boolean ready) throws RemoteException {
+        for(Player p: players) {
+            if(p.getID() == playerid) {
+                p.setReady(ready);
+                System.out.println("PlayerID: " + p.getID() + " ready: " + ready);
+            }
+        }
+        
+        for(Player p: players) {
+            if(p.getReady() == false) //If there is 1 player not ready
+                return; //Return [dont start game]
+        }
+        
+        System.out.println("Starting game!");
+        //STARTGAME
     }
 }
