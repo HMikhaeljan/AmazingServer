@@ -39,6 +39,7 @@ public class ConTest {
             System.out.println(e.getMessage());
         }
         
+        
         try {
             umanager = (ILogin) registry.lookup("UserManager");
             gmanager = (IGameManager) registry.lookup("GameManager");
@@ -76,6 +77,7 @@ public class ConTest {
         //Start game (both ready, check server log)
         game.setReady(phovsep.getID(), true);
         game.setReady(p.getID(), true);
+        
         System.out.println("Game started! (check server log)");
         
         Block[][] grid = game.getGrid();

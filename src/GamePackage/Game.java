@@ -49,6 +49,16 @@ public class Game extends UnicastRemoteObject implements IGame {
         messages = new ArrayList<String>();
     }
     
+    private void startGame() {
+        int idx= 0;
+        for(Player p : players) {
+            p.setX(spawnpoints.get(idx).getX() * spriteSize);
+            p.setY(spawnpoints.get(idx).getY() * spriteSize);
+            idx++;
+            System.out.println("Player: " + p.getID() + " Spawned at X:" + p.getX() + " Y:" + p.getY());
+        }
+    }
+    
     @Override
     public int getGameID() {
         return gameID;
@@ -100,6 +110,6 @@ public class Game extends UnicastRemoteObject implements IGame {
         }
         
         System.out.println("Starting game!");
-        //STARTGAME
+        startGame();
     }
 }
