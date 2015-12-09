@@ -85,7 +85,7 @@ public class Game extends UnicastRemoteObject implements IGame {
             }
         }
         //System.out.println("Bananen zijn cool");
-        Player p = new Player(userid, players.size(), 100, -1);
+        Player p = new Player(userid, players.size(), 100, 1);
         players.add(p);
         return p;
     }
