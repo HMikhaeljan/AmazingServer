@@ -37,7 +37,7 @@ public class Game extends UnicastRemoteObject implements IGame {
     private Maze maze;
     private ArrayList<SpawnPoint> spawnpoints;
     private int spriteSize = 16;
-    private int moveSpeed = 10;
+    private int moveSpeed = 20;
 
     /**
      *
@@ -91,12 +91,15 @@ public class Game extends UnicastRemoteObject implements IGame {
         
         if(keys.size() < 1)
             return;
-        System.out.println("The following keys have been pressed: " + keys + " by: " + playerid);
+        
         
         for(KeyCode key: keys) {
             if(key.isArrowKey()) {
                 if(!curPlayer.isMoving())
+                {
                     movePlayer(curPlayer, key);
+                    System.out.println("The following movement key has been pressed: " + keys + " by: " + playerid);
+                }
             }
         }
     }
@@ -108,7 +111,7 @@ public class Game extends UnicastRemoteObject implements IGame {
         int gridX =(int) (p.getX() / spriteSize);
         int gridY =(int) (p.getY() / spriteSize);
         Block[][] grid = maze.GetGrid();
-        
+        Timer t;
         switch(dir) {
             case UP:
                 if(grid[gridY-1][gridX] == Block.SOLID) {
@@ -117,8 +120,38 @@ public class Game extends UnicastRemoteObject implements IGame {
                 }
                 System.out.println("Moving up!"); 
                 p.setDirection(Direction.UP);
-                Timer t = new Timer();
+                t = new Timer();
                 t.scheduleAtFixedRate(new MoveAnim(p, Direction.UP), 0, moveSpeed);
+                break;
+            case DOWN:
+                if(grid[gridY+1][gridX] == Block.SOLID){
+                    System.out.print("Hit wall!");
+                    return;
+                }
+                System.out.println("Moving down!");
+                p.setDirection(Direction.DOWN);
+                t = new Timer();
+                t.scheduleAtFixedRate(new MoveAnim(p, Direction.DOWN), 0, moveSpeed);
+                break;
+            case RIGHT:
+                if(grid[gridY][gridX+1] == Block.SOLID){
+                    System.out.print("Hit wall!");
+                    return;
+                }
+                System.out.println("Moving right!");
+                p.setDirection(Direction.RIGHT);
+                t = new Timer();
+                t.scheduleAtFixedRate(new MoveAnim(p, Direction.RIGHT), 0, moveSpeed);
+                break;
+            case LEFT:
+                if(grid[gridY][gridX-1] == Block.SOLID){
+                    System.out.print("Hit wall!");
+                    return;
+                }
+                System.out.println("Moving left!");
+                p.setDirection(Direction.LEFT);
+                t = new Timer();
+                t.scheduleAtFixedRate(new MoveAnim(p, Direction.LEFT), 0, moveSpeed);
                 break;
         }
     }
@@ -139,7 +172,18 @@ public class Game extends UnicastRemoteObject implements IGame {
                 xEnd = p.getX();
                 yEnd = p.getY() - spriteSize;
             }
-            
+            if(d == Direction.DOWN) {
+                xEnd = p.getX();
+                yEnd = p.getY() + spriteSize;
+            }
+            if(d == Direction.RIGHT) {
+                xEnd = p.getX() + spriteSize;
+                yEnd = p.getY();
+            }
+            if(d == Direction.LEFT) {
+                xEnd = p.getX() - spriteSize;
+                yEnd = p.getY();
+            }
         }
 
         @Override
