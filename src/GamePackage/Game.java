@@ -7,6 +7,8 @@ package GamePackage;
 
 import Maze.Maze;
 import Maze.SpawnPoint;
+import amazingsharedproject.Block;
+import amazingsharedproject.Direction;
 import amazingsharedproject.GameState;
 import amazingsharedproject.Interfaces.IGame;
 import amazingsharedproject.Player;
@@ -15,8 +17,10 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.animation.AnimationTimer;
 import javafx.scene.input.KeyCode;
-import jdk.nashorn.internal.ir.Block;
 
 /**
  *
@@ -33,6 +37,7 @@ public class Game extends UnicastRemoteObject implements IGame {
     private Maze maze;
     private ArrayList<SpawnPoint> spawnpoints;
     private int spriteSize = 16;
+    private int moveSpeed = 10;
 
     /**
      *
@@ -73,9 +78,97 @@ public class Game extends UnicastRemoteObject implements IGame {
 
     @Override
     public void handleInput(int playerid, List<KeyCode> keys) throws RemoteException {
+        Player curPlayer = null;
+        for(Player p: players) {
+            if(p.getID() == playerid)
+            {
+                curPlayer = p;
+                break;
+            }
+        }
+        if(curPlayer == null)
+            return;
+        
+        if(keys.size() < 1)
+            return;
         System.out.println("The following keys have been pressed: " + keys + " by: " + playerid);
+        
+        for(KeyCode key: keys) {
+            if(key.isArrowKey()) {
+                if(!curPlayer.isMoving())
+                    movePlayer(curPlayer, key);
+            }
+        }
     }
+    
+    
+    public void movePlayer(Player p, KeyCode dir) {    
+        if(p.isMoving())
+            return;
+        int gridX =(int) (p.getX() / spriteSize);
+        int gridY =(int) (p.getY() / spriteSize);
+        Block[][] grid = maze.GetGrid();
+        
+        switch(dir) {
+            case UP:
+                if(grid[gridY-1][gridX] == Block.SOLID) {
+                    System.out.println("Hit wall!");
+                    return;
+                }
+                System.out.println("Moving up!"); 
+                p.setDirection(Direction.UP);
+                Timer t = new Timer();
+                t.scheduleAtFixedRate(new MoveAnim(p, Direction.UP), 0, moveSpeed);
+                break;
+        }
+    }
+    
+    private class MoveAnim extends TimerTask {
+        private Player p;
+        private int moves;
+        private Direction d;
+        private double xEnd;
+        private double yEnd;
+        public MoveAnim(Player p, Direction d) {
+            this.p = p;
+            this.d = d;
+            moves = 0;
+            p.setMoving(true);
+            if(d == Direction.UP)
+            {
+                xEnd = p.getX();
+                yEnd = p.getY() - spriteSize;
+            }
+            
+        }
 
+        @Override
+        public void run() {
+            
+            double x = p.getX();
+            double y = p.getY();
+            
+            if(x == xEnd && y == yEnd) {
+                p.setMoving(false);
+                this.cancel();
+            }
+            if(x < xEnd) {
+                p.setX(x + 1);
+            }
+            if(x > xEnd) {
+                p.setX(x - 1);
+            }
+            if(y < yEnd)
+            {
+                p.setY(y + 1);
+            }
+            if(y > yEnd) {
+                p.setY(y - 1);
+            }
+        }
+        
+    }
+    
     @Override
     public Player getPlayer(int userid) throws RemoteException {
         
