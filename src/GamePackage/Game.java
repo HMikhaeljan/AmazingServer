@@ -7,9 +7,11 @@ package GamePackage;
 
 import Maze.Maze;
 import Maze.SpawnPoint;
+import amazingsharedproject.Ability;
 import amazingsharedproject.Block;
 import amazingsharedproject.Direction;
 import amazingsharedproject.GameState;
+import amazingsharedproject.Interfaces.IAbility;
 import amazingsharedproject.Interfaces.IGame;
 import amazingsharedproject.Player;
 import amazingsharedproject.Used;
@@ -19,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.animation.AnimationTimer;
 import javafx.scene.input.KeyCode;
 
@@ -153,6 +157,56 @@ public class Game extends UnicastRemoteObject implements IGame {
                 t = new Timer();
                 t.scheduleAtFixedRate(new MoveAnim(p, Direction.LEFT), 0, moveSpeed);
                 break;
+        }
+    }
+    
+    private class AbilityAnim extends TimerTask {
+
+        private Used ability;
+        private Direction direction;
+        private double xEnd;
+        private double yEnd;
+        
+        public AbilityAnim(Used ability, Direction direction) throws RemoteException {
+            this.ability = ability;
+            this.direction= direction;
+            if(direction == Direction.UP) {
+                xEnd = ability.getX();
+                yEnd = ability.getY() - spriteSize;
+            } else if (direction == Direction.DOWN) {
+                xEnd = ability.getX();
+                yEnd = ability.getY() + spriteSize;                
+            } else if (direction == Direction.RIGHT) {
+                xEnd = ability.getX() + spriteSize;
+                yEnd = ability.getY();                
+            } else if (direction == Direction.LEFT) {
+                xEnd = ability.getX() - spriteSize;
+                yEnd = ability.getY();                
+            }
+        }
+        
+        @Override
+        public void run() {
+            double x;
+            double y;
+            try {
+                x = ability.getX();
+                y = ability.getY();
+                if (x < xEnd) {
+                    ability.setX(x + 1);
+                }
+                if (x > xEnd) {
+                    ability.setX(x - 1);
+                }
+                if (y < yEnd) {
+                    ability.setY(y + 1);
+                }
+                if (y > yEnd) {
+                    ability.setY(y - 1);
+                }
+            } catch (RemoteException ex) {
+                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     
