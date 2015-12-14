@@ -42,6 +42,8 @@ public class Game extends UnicastRemoteObject implements IGame {
     private int moveSpeed = 20;
     private int attackSpeed = 15;
     private int readyCounter = 0;
+    private int playerRoleID = 1;
+    Player p;
 
     /**
      *
@@ -139,6 +141,7 @@ public class Game extends UnicastRemoteObject implements IGame {
                     System.out.println("Hit wall!");
                     return;
                 }
+
                 System.out.println("Moving up!");
                 p.setDirection(Direction.UP);
                 t = new Timer();
@@ -349,6 +352,15 @@ public class Game extends UnicastRemoteObject implements IGame {
 
     }
 
+    public void changeRole(int userid, int playerRoleID) {
+        for (Player p : players) {
+            if (p.getUserID() == userid) {
+                this.playerRoleID = playerRoleID;
+                p.setRoleID(playerRoleID);
+            }
+        }
+    }
+
     @Override
     public Player getPlayer(int userid) throws RemoteException {
 
@@ -358,7 +370,7 @@ public class Game extends UnicastRemoteObject implements IGame {
             }
         }
         //System.out.println("Bananen zijn cool");
-        Player p = new Player(userid, players.size(), 100, 1);
+        p = new Player(userid, players.size(), 100, playerRoleID);
         players.add(p);
         return p;
     }
@@ -367,7 +379,7 @@ public class Game extends UnicastRemoteObject implements IGame {
     public amazingsharedproject.Block[][] getGrid() throws RemoteException {
         return maze.GetGrid();
     }
-    
+
     public Boolean allPlayersReady() {
         if (readyCounter == players.size() && players.size() > 1) {
             return true;
@@ -377,7 +389,7 @@ public class Game extends UnicastRemoteObject implements IGame {
 
     @Override
     public void setReady(int playerid, boolean ready) throws RemoteException {
-        System.out.println("Playersize: "+  players.size());
+        System.out.println("Playersize: " + players.size());
         readyCounter++;
         for (Player p : players) {
             if (p.getID() == playerid) {
