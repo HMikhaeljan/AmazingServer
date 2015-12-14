@@ -43,6 +43,7 @@ public class Game extends UnicastRemoteObject implements IGame {
     private ArrayList<SpawnPoint> spawnpoints;
     private int spriteSize = 16;
     private int moveSpeed = 20;
+    private int attackSpeed = 15;
 
     /**
      *
@@ -103,6 +104,19 @@ public class Game extends UnicastRemoteObject implements IGame {
                 if (!curPlayer.isMoving()) {
                     movePlayer(curPlayer, key);
                     System.out.println("The following movement key has been pressed: " + keys + " by: " + playerid);
+                }
+            }
+            if (key.isDigitKey()) {
+                for (Used ua : usedAbilities) {
+                    if (ua.getCreatorID() == curPlayer.getID()) {
+                        return;
+                    }
+                }
+                if (key == KeyCode.DIGIT1) {
+                    Used u = new Used(curPlayer.getID(), 1, curPlayer.getX(), curPlayer.getY(), curPlayer.getDirection());
+                    usedAbilities.add(u);
+                    Timer t = new Timer();
+                    t.scheduleAtFixedRate(new AbilityAnim(u, curPlayer.getDirection()), 0, attackSpeed);
                 }
             }
         }
@@ -175,9 +189,19 @@ public class Game extends UnicastRemoteObject implements IGame {
         private double xEnd;
         private double yEnd;
 
+        private int gridX;
+        private int gridY;
+        private int idx;
+
+        private boolean destroyed;
+        
+        private int addMoves;
+
         public AbilityAnim(Used ability, Direction direction) throws RemoteException {
             this.ability = ability;
             this.direction = direction;
+            
+            /*
             if (direction == Direction.UP) {
                 xEnd = ability.getX();
                 yEnd = ability.getY() - spriteSize;
@@ -191,27 +215,75 @@ public class Game extends UnicastRemoteObject implements IGame {
                 xEnd = ability.getX() - spriteSize;
                 yEnd = ability.getY();
             }
+            */
+            //idx = spriteSize;
+            
+            addMoves=6;
         }
 
         @Override
         public void run() {
             double x;
             double y;
+
+            if (destroyed) {
+                if(addMoves < 1) {
+                    usedAbilities.remove(ability);
+                    System.out.println("Ability destroyed");
+                    this.cancel();
+                }
+                else
+                    addMoves--;
+                
+            }
+
             try {
                 x = ability.getX();
                 y = ability.getY();
-                if (x < xEnd) {
-                    ability.setX(x + 1);
+                Block[][] grid = getGrid();
+
+                if (x % 1 == 0 && y % 1 == 0) { //Solid grid position
+                    gridX = (int) (ability.getX() / spriteSize);
+                    gridY = (int) (ability.getY() / spriteSize);
+
+                    switch (direction) {
+                        case UP:
+                            if (grid[gridY - 1][gridX] == Block.SOLID) {
+                                destroyed = true;
+                            }
+                            break;
+                        case DOWN:
+                            if (grid[gridY + 1][gridX] == Block.SOLID) {
+                                destroyed = true;
+                            }
+                            break;
+                        case LEFT:
+                            if (grid[gridY][gridX - 1] == Block.SOLID) {
+                                destroyed = true;
+                            }
+                            break;
+                        case RIGHT:
+                            if (grid[gridY][gridX + 1] == Block.SOLID) {
+                                destroyed = true;
+                            }
+                            break;
+                    }
                 }
-                if (x > xEnd) {
-                    ability.setX(x - 1);
+                switch(ability.getDirection()) {
+                    case UP:
+                        ability.setY(y-1);
+                        break;
+                    case DOWN:
+                        ability.setY(y+1);
+                        break;
+                    case LEFT:
+                        ability.setX(x-1);
+                        break;
+                    case RIGHT:
+                        ability.setX(x+1);
+                        break;
                 }
-                if (y < yEnd) {
-                    ability.setY(y + 1);
-                }
-                if (y > yEnd) {
-                    ability.setY(y - 1);
-                }
+                //idx--;
             } catch (RemoteException ex) {
                 Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
             }
