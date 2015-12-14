@@ -78,4 +78,20 @@ public class GameManager extends UnicastRemoteObject implements IGameManager {
         }
         return igames;
     }
+
+    @Override
+    public void removeLobby(int gameid) throws RemoteException {
+        Game g= null;
+        
+        for(Game a : activeGames) {
+            if(a.getGameID() == gameid)
+                g = a;
+        }
+        
+        if(g == null)
+            return;
+        
+        activeGames.remove(g);
+        
+    }
 }
