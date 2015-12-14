@@ -69,7 +69,20 @@ public class UserManager extends UnicastRemoteObject implements ILogin {
     }
 
     public void addToOnline(User user) {
+        System.out.println("User added:" + user);
         onlineUsers.add(user);
+    }
+
+    @Override
+    public void removeFromOnline(User user) {
+        if (onlineUsers != null) {
+            for (User userOn : onlineUsers) {
+                if (user.getUserID() == (userOn.getUserID())) {
+                    System.out.println("Online user removed:" + userOn.getUserID());
+                    onlineUsers.remove(userOn);
+                }
+            }
+        }
     }
 
     /**
@@ -83,14 +96,16 @@ public class UserManager extends UnicastRemoteObject implements ILogin {
      * @return User if account exists otherwise return null.
      * @throws java.sql.SQLException
      */
-    public User Login(String username, String password) {
+    @Override
+    public User Login(String username, String password
+    ) {
 
         try {
             for (User user : db.getUsers()) {
                 if (user.getName().equals(username) && user.getPassword().equals(password)) {
 
                     System.out.println("User " + user.getName() + " has logged in");
-                    addToOnline(user);
+
                     return user;
                 }
 

@@ -31,13 +31,14 @@ import javafx.scene.input.KeyCode;
  * @author Hovsep
  */
 public class Game extends UnicastRemoteObject implements IGame {
+
     private int gameID;
-    
+
     //GameState:
     private ArrayList<Player> players;
     private ArrayList<Used> usedAbilities;
     private ArrayList<String> messages;
-    
+    private String gameName;
     private Maze maze;
     private ArrayList<SpawnPoint> spawnpoints;
     private int spriteSize = 16;
@@ -57,17 +58,17 @@ public class Game extends UnicastRemoteObject implements IGame {
         usedAbilities = new ArrayList<Used>();
         messages = new ArrayList<String>();
     }
-    
+
     private void startGame() {
-        int idx= 0;
-        for(Player p : players) {
+        int idx = 0;
+        for (Player p : players) {
             p.setX(spawnpoints.get(idx).getX() * spriteSize);
             p.setY(spawnpoints.get(idx).getY() * spriteSize);
             idx++;
             System.out.println("Player: " + p.getID() + " Spawned at X:" + p.getX() + " Y:" + p.getY());
         }
     }
-    
+
     @Override
     public int getGameID() {
         return gameID;
@@ -83,52 +84,51 @@ public class Game extends UnicastRemoteObject implements IGame {
     @Override
     public void handleInput(int playerid, List<KeyCode> keys) throws RemoteException {
         Player curPlayer = null;
-        for(Player p: players) {
-            if(p.getID() == playerid)
-            {
+        for (Player p : players) {
+            if (p.getID() == playerid) {
                 curPlayer = p;
                 break;
             }
         }
-        if(curPlayer == null)
+        if (curPlayer == null) {
             return;
-        
-        if(keys.size() < 1)
+        }
+
+        if (keys.size() < 1) {
             return;
-        
-        
-        for(KeyCode key: keys) {
-            if(key.isArrowKey()) {
-                if(!curPlayer.isMoving())
-                {
+        }
+
+        for (KeyCode key : keys) {
+            if (key.isArrowKey()) {
+                if (!curPlayer.isMoving()) {
                     movePlayer(curPlayer, key);
                     System.out.println("The following movement key has been pressed: " + keys + " by: " + playerid);
                 }
             }
         }
     }
-    
-    
-    public void movePlayer(Player p, KeyCode dir) {    
-        if(p.isMoving())
+
+    public void movePlayer(Player p, KeyCode dir) {
+        if (p.isMoving()) {
             return;
-        int gridX =(int) (p.getX() / spriteSize);
-        int gridY =(int) (p.getY() / spriteSize);
+        }
+        int gridX = (int) (p.getX() / spriteSize);
+        int gridY = (int) (p.getY() / spriteSize);
         Block[][] grid = maze.GetGrid();
         Timer t;
-        switch(dir) {
+        switch (dir) {
             case UP:
-                if(grid[gridY-1][gridX] == Block.SOLID) {
+                if (grid[gridY - 1][gridX] == Block.SOLID) {
                     System.out.println("Hit wall!");
                     return;
                 }
-                System.out.println("Moving up!"); 
+                System.out.println("Moving up!");
                 p.setDirection(Direction.UP);
                 t = new Timer();
                 t.scheduleAtFixedRate(new MoveAnim(p, Direction.UP), 0, moveSpeed);
                 break;
             case DOWN:
-                if(grid[gridY+1][gridX] == Block.SOLID){
+                if (grid[gridY + 1][gridX] == Block.SOLID) {
                     System.out.print("Hit wall!");
                     return;
                 }
@@ -138,7 +138,7 @@ public class Game extends UnicastRemoteObject implements IGame {
                 t.scheduleAtFixedRate(new MoveAnim(p, Direction.DOWN), 0, moveSpeed);
                 break;
             case RIGHT:
-                if(grid[gridY][gridX+1] == Block.SOLID){
+                if (grid[gridY][gridX + 1] == Block.SOLID) {
                     System.out.print("Hit wall!");
                     return;
                 }
@@ -148,7 +148,7 @@ public class Game extends UnicastRemoteObject implements IGame {
                 t.scheduleAtFixedRate(new MoveAnim(p, Direction.RIGHT), 0, moveSpeed);
                 break;
             case LEFT:
-                if(grid[gridY][gridX-1] == Block.SOLID){
+                if (grid[gridY][gridX - 1] == Block.SOLID) {
                     System.out.print("Hit wall!");
                     return;
                 }
@@ -159,32 +159,40 @@ public class Game extends UnicastRemoteObject implements IGame {
                 break;
         }
     }
-    
+
+    public String getGameName() {
+        return gameName;
+    }
+
+    public void setGameName(String g) {
+        gameName = g;
+    }
+
     private class AbilityAnim extends TimerTask {
 
         private Used ability;
         private Direction direction;
         private double xEnd;
         private double yEnd;
-        
+
         public AbilityAnim(Used ability, Direction direction) throws RemoteException {
             this.ability = ability;
-            this.direction= direction;
-            if(direction == Direction.UP) {
+            this.direction = direction;
+            if (direction == Direction.UP) {
                 xEnd = ability.getX();
                 yEnd = ability.getY() - spriteSize;
             } else if (direction == Direction.DOWN) {
                 xEnd = ability.getX();
-                yEnd = ability.getY() + spriteSize;                
+                yEnd = ability.getY() + spriteSize;
             } else if (direction == Direction.RIGHT) {
                 xEnd = ability.getX() + spriteSize;
-                yEnd = ability.getY();                
+                yEnd = ability.getY();
             } else if (direction == Direction.LEFT) {
                 xEnd = ability.getX() - spriteSize;
-                yEnd = ability.getY();                
+                yEnd = ability.getY();
             }
         }
-        
+
         @Override
         public void run() {
             double x;
@@ -209,32 +217,33 @@ public class Game extends UnicastRemoteObject implements IGame {
             }
         }
     }
-    
+
     private class MoveAnim extends TimerTask {
+
         private Player p;
         private int moves;
         private Direction d;
         private double xEnd;
         private double yEnd;
+
         public MoveAnim(Player p, Direction d) {
             this.p = p;
             this.d = d;
             moves = 0;
             p.setMoving(true);
-            if(d == Direction.UP)
-            {
+            if (d == Direction.UP) {
                 xEnd = p.getX();
                 yEnd = p.getY() - spriteSize;
             }
-            if(d == Direction.DOWN) {
+            if (d == Direction.DOWN) {
                 xEnd = p.getX();
                 yEnd = p.getY() + spriteSize;
             }
-            if(d == Direction.RIGHT) {
+            if (d == Direction.RIGHT) {
                 xEnd = p.getX() + spriteSize;
                 yEnd = p.getY();
             }
-            if(d == Direction.LEFT) {
+            if (d == Direction.LEFT) {
                 xEnd = p.getX() - spriteSize;
                 yEnd = p.getY();
             }
@@ -242,36 +251,35 @@ public class Game extends UnicastRemoteObject implements IGame {
 
         @Override
         public void run() {
-            
+
             double x = p.getX();
             double y = p.getY();
-            
-            if(x == xEnd && y == yEnd) {
+
+            if (x == xEnd && y == yEnd) {
                 p.setMoving(false);
                 this.cancel();
             }
-            if(x < xEnd) {
+            if (x < xEnd) {
                 p.setX(x + 1);
             }
-            if(x > xEnd) {
+            if (x > xEnd) {
                 p.setX(x - 1);
             }
-            if(y < yEnd)
-            {
+            if (y < yEnd) {
                 p.setY(y + 1);
             }
-            if(y > yEnd) {
+            if (y > yEnd) {
                 p.setY(y - 1);
             }
         }
-        
+
     }
-    
+
     @Override
     public Player getPlayer(int userid) throws RemoteException {
-        
-        for(Player p : players) {
-            if(p.getUserID() == userid) {
+
+        for (Player p : players) {
+            if (p.getUserID() == userid) {
                 return p;
             }
         }
@@ -288,18 +296,20 @@ public class Game extends UnicastRemoteObject implements IGame {
 
     @Override
     public void setReady(int playerid, boolean ready) throws RemoteException {
-        for(Player p: players) {
-            if(p.getID() == playerid) {
+        for (Player p : players) {
+            if (p.getID() == playerid) {
                 p.setReady(ready);
                 System.out.println("PlayerID: " + p.getID() + " ready: " + ready);
             }
         }
-        
-        for(Player p: players) {
-            if(p.getReady() == false) //If there is 1 player not ready
+
+        for (Player p : players) {
+            if (p.getReady() == false) //If there is 1 player not ready
+            {
                 return; //Return [dont start game]
+            }
         }
-        
+
         System.out.println("Starting game!");
         startGame();
     }
