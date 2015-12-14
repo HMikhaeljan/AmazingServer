@@ -83,6 +83,11 @@ public class Game extends UnicastRemoteObject implements IGame {
     }
 
     @Override
+    public List<Player> getPlayers() throws RemoteException {
+        return players;
+    }
+
+    @Override
     public void handleInput(int playerid, List<KeyCode> keys) throws RemoteException {
         Player curPlayer = null;
         for (Player p : players) {
@@ -194,31 +199,30 @@ public class Game extends UnicastRemoteObject implements IGame {
         private int idx;
 
         private boolean destroyed;
-        
+
         private int addMoves;
 
         public AbilityAnim(Used ability, Direction direction) throws RemoteException {
             this.ability = ability;
             this.direction = direction;
-            
+
             /*
-            if (direction == Direction.UP) {
-                xEnd = ability.getX();
-                yEnd = ability.getY() - spriteSize;
-            } else if (direction == Direction.DOWN) {
-                xEnd = ability.getX();
-                yEnd = ability.getY() + spriteSize;
-            } else if (direction == Direction.RIGHT) {
-                xEnd = ability.getX() + spriteSize;
-                yEnd = ability.getY();
-            } else if (direction == Direction.LEFT) {
-                xEnd = ability.getX() - spriteSize;
-                yEnd = ability.getY();
-            }
-            */
+             if (direction == Direction.UP) {
+             xEnd = ability.getX();
+             yEnd = ability.getY() - spriteSize;
+             } else if (direction == Direction.DOWN) {
+             xEnd = ability.getX();
+             yEnd = ability.getY() + spriteSize;
+             } else if (direction == Direction.RIGHT) {
+             xEnd = ability.getX() + spriteSize;
+             yEnd = ability.getY();
+             } else if (direction == Direction.LEFT) {
+             xEnd = ability.getX() - spriteSize;
+             yEnd = ability.getY();
+             }
+             */
             //idx = spriteSize;
-            
-            addMoves=6;
+            addMoves = 6;
         }
 
         @Override
@@ -227,14 +231,14 @@ public class Game extends UnicastRemoteObject implements IGame {
             double y;
 
             if (destroyed) {
-                if(addMoves < 1) {
+                if (addMoves < 1) {
                     usedAbilities.remove(ability);
                     System.out.println("Ability destroyed");
                     this.cancel();
-                }
-                else
+                } else {
                     addMoves--;
-                
+                }
+
             }
 
             try {
@@ -269,18 +273,18 @@ public class Game extends UnicastRemoteObject implements IGame {
                             break;
                     }
                 }
-                switch(ability.getDirection()) {
+                switch (ability.getDirection()) {
                     case UP:
-                        ability.setY(y-1);
+                        ability.setY(y - 1);
                         break;
                     case DOWN:
-                        ability.setY(y+1);
+                        ability.setY(y + 1);
                         break;
                     case LEFT:
-                        ability.setX(x-1);
+                        ability.setX(x - 1);
                         break;
                     case RIGHT:
-                        ability.setX(x+1);
+                        ability.setX(x + 1);
                         break;
                 }
                 //idx--;
