@@ -44,6 +44,8 @@ public class Game extends UnicastRemoteObject implements IGame {
     private int spriteSize = 16;
     private int moveSpeed = 20;
     private int attackSpeed = 15;
+    
+    private int readyCounter = 0;
 
     /**
      *
@@ -375,6 +377,8 @@ public class Game extends UnicastRemoteObject implements IGame {
         for (Player p : players) {
             if (p.getID() == playerid) {
                 p.setReady(ready);
+                readyCounter++;
+                System.out.println("ReadyCounter: " + readyCounter);
                 System.out.println("PlayerID: " + p.getID() + " ready: " + ready);
             }
         }
@@ -387,6 +391,8 @@ public class Game extends UnicastRemoteObject implements IGame {
         }
 
         System.out.println("Starting game!");
-        startGame();
+        if (readyCounter == players.size()) {
+            startGame();
+        }
     }
 }
