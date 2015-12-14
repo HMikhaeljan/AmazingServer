@@ -9,6 +9,7 @@ import Database.DatabaseConnection;
 import amazingsharedproject.Interfaces.ILogin;
 import amazingsharedproject.Stat;
 import amazingsharedproject.User;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.List;
@@ -16,6 +17,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 
 /**
  *
@@ -26,17 +30,40 @@ public class UserManager extends UnicastRemoteObject implements ILogin {
     DatabaseConnection db = new DatabaseConnection();
     List<User> onlineUsers = new ArrayList<User>();
     List<User> allUsers = new ArrayList<User>();
+    List<User> tempList = new ArrayList<User>();
+
     User newuser;
     Stat stat;
+    Timer timer = new Timer("Timer");
+
+    long start = 0;
+    long interval = 10000;
 
     public UserManager() throws RemoteException, SQLException {
         loadAllUsers();
+        timer.scheduleAtFixedRate(new reloadUsersFromDB(), start, interval);
+    }
+
+    private class reloadUsersFromDB extends TimerTask {
+
+        @Override
+        public void run() {
+            try {
+                loadAllUsers();
+            } catch (SQLException ex) {
+                Logger.getLogger(UserManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
     }
 
     public void loadAllUsers() throws SQLException {
+        tempList.clear();
+        db = new DatabaseConnection();
         for (User user : db.getUsers()) {
-            allUsers.add(user);
+            tempList.add(user);
         }
+        allUsers = tempList;
 
     }
 

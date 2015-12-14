@@ -7,11 +7,9 @@ package GamePackage;
 
 import Maze.Maze;
 import Maze.SpawnPoint;
-import amazingsharedproject.Ability;
 import amazingsharedproject.Block;
 import amazingsharedproject.Direction;
 import amazingsharedproject.GameState;
-import amazingsharedproject.Interfaces.IAbility;
 import amazingsharedproject.Interfaces.IGame;
 import amazingsharedproject.Player;
 import amazingsharedproject.Used;
@@ -23,7 +21,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.animation.AnimationTimer;
 import javafx.scene.input.KeyCode;
 
 /**
@@ -44,7 +41,6 @@ public class Game extends UnicastRemoteObject implements IGame {
     private int spriteSize = 16;
     private int moveSpeed = 20;
     private int attackSpeed = 15;
-    
     private int readyCounter = 0;
 
     /**
@@ -371,13 +367,22 @@ public class Game extends UnicastRemoteObject implements IGame {
     public amazingsharedproject.Block[][] getGrid() throws RemoteException {
         return maze.GetGrid();
     }
+    
+    public Boolean allPlayersReady() {
+        if (readyCounter == players.size() && players.size() > 1) {
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public void setReady(int playerid, boolean ready) throws RemoteException {
+        System.out.println("Playersize: "+  players.size());
+        readyCounter++;
         for (Player p : players) {
             if (p.getID() == playerid) {
                 p.setReady(ready);
-                readyCounter++;
+                System.out.println("Ready Counter Increased To: " + readyCounter);
                 System.out.println("ReadyCounter: " + readyCounter);
                 System.out.println("PlayerID: " + p.getID() + " ready: " + ready);
             }
@@ -391,7 +396,8 @@ public class Game extends UnicastRemoteObject implements IGame {
         }
 
         System.out.println("Starting game!");
-        if (readyCounter == players.size()) {
+        if (readyCounter == players.size() && players.size() > 1) {
+            System.out.println("All Users Pressed Ready");
             startGame();
         }
     }
