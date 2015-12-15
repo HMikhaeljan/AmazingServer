@@ -118,7 +118,9 @@ public class Game extends UnicastRemoteObject implements IGame {
                     }
                 }
                 if (key == KeyCode.DIGIT1) {
-                    Used u = new Used(curPlayer.getID(), 1, curPlayer.getX(), curPlayer.getY(), curPlayer.getDirection());
+                    Used u = new Used(curPlayer.getID(), 1+(4*playerRoleID), curPlayer.getX(), curPlayer.getY(), curPlayer.getDirection());
+                    int tempInt = 1+(4*playerRoleID);
+                    System.out.println("Which AbilityID: " + tempInt);
                     usedAbilities.add(u);
                     Timer t = new Timer();
                     t.scheduleAtFixedRate(new AbilityAnim(u, curPlayer.getDirection()), 0, attackSpeed);
