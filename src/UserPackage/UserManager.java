@@ -9,7 +9,6 @@ import Database.DatabaseConnection;
 import amazingsharedproject.Interfaces.ILogin;
 import amazingsharedproject.Stat;
 import amazingsharedproject.User;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.List;
@@ -19,7 +18,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
-import javafx.application.Platform;
 
 /**
  *
@@ -37,11 +35,11 @@ public class UserManager extends UnicastRemoteObject implements ILogin {
     Timer timer = new Timer("Timer");
 
     long start = 0;
-    long interval = 10000;
+    long interval = 60000;
 
     public UserManager() throws RemoteException, SQLException {
         loadAllUsers();
-        timer.scheduleAtFixedRate(new reloadUsersFromDB(), start, interval);
+       // timer.scheduleAtFixedRate(new reloadUsersFromDB(), start, interval);
     }
 
     private class reloadUsersFromDB extends TimerTask {
@@ -64,7 +62,6 @@ public class UserManager extends UnicastRemoteObject implements ILogin {
             tempList.add(user);
         }
         allUsers = tempList;
-
     }
 
     public List<User> getAllUsers() {
