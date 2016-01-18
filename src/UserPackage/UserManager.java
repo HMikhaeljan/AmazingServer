@@ -99,14 +99,17 @@ public class UserManager extends UnicastRemoteObject implements ILogin {
 
     @Override
     public void removeFromOnline(User user) {
+        User toRem= null;
         if (onlineUsers != null) {
             for (User userOn : onlineUsers) {
                 if (user.getUserID() == (userOn.getUserID())) {
                     System.out.println("Online user removed:" + userOn.getUserID());
-                    onlineUsers.remove(userOn);
+                    toRem = userOn;
                 }
             }
         }
+        if(toRem != null)
+            onlineUsers.remove(toRem);
     }
 
     /**

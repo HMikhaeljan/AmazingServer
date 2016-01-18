@@ -351,10 +351,13 @@ public class Game extends UnicastRemoteObject implements IGame {
     
     private void addMessage(String message) {
         messages.add(message);
+        if(messages.size() > 5) {
+            messages.remove(0);
+        }
     }
     
     private void playerDeath(Player p, int killerid) throws RemoteException {
-        String pdeath = "Player " + p.getID() + " has been killed by player: " + this.getPlayer(killerid);
+        String pdeath = "Player " + p.getID() + " has been killed by player: " + this.getPlayer(killerid).getID();
         addMessage(pdeath);
         //Code voor death hier?
     }
