@@ -7,6 +7,7 @@ package GamePackage;
 
 import Maze.Maze;
 import Maze.SpawnPoint;
+import amazingsharedproject.Ability;
 import amazingsharedproject.Block;
 import amazingsharedproject.Direction;
 import amazingsharedproject.GameState;
@@ -108,7 +109,7 @@ public class Game extends UnicastRemoteObject implements IGame {
             if (key.isArrowKey()) {
                 if (!curPlayer.isMoving()) {
                     movePlayer(curPlayer, key);
-                    System.out.println("The following movement key has been pressed: " + keys + " by: " + playerid);
+                    //System.out.println("The following movement key has been pressed: " + keys + " by: " + playerid);
                 }
             }
             if (key.isDigitKey()) {
@@ -120,7 +121,7 @@ public class Game extends UnicastRemoteObject implements IGame {
                 if (key == KeyCode.DIGIT1) {
                     Used u = new Used(curPlayer.getID(), 1+(4*playerRoleID), curPlayer.getX(), curPlayer.getY(), curPlayer.getDirection());
                     int tempInt = 1+(4*playerRoleID);
-                    System.out.println("Which AbilityID: " + tempInt);
+                    //System.out.println("Which AbilityID: " + tempInt);
                     usedAbilities.add(u);
                     Timer t = new Timer();
                     t.scheduleAtFixedRate(new AbilityAnim(u, curPlayer.getDirection()), 0, attackSpeed);
@@ -140,41 +141,41 @@ public class Game extends UnicastRemoteObject implements IGame {
         switch (dir) {
             case UP:
                 if (grid[gridY - 1][gridX] == Block.SOLID) {
-                    System.out.println("Hit wall!");
+                    //System.out.println("Hit wall!");
                     return;
                 }
 
-                System.out.println("Moving up!");
+                //System.out.println("Moving up!");
                 p.setDirection(Direction.UP);
                 t = new Timer();
                 t.scheduleAtFixedRate(new MoveAnim(p, Direction.UP), 0, moveSpeed);
                 break;
             case DOWN:
                 if (grid[gridY + 1][gridX] == Block.SOLID) {
-                    System.out.print("Hit wall!");
+                    //System.out.print("Hit wall!");
                     return;
                 }
-                System.out.println("Moving down!");
+                //System.out.println("Moving down!");
                 p.setDirection(Direction.DOWN);
                 t = new Timer();
                 t.scheduleAtFixedRate(new MoveAnim(p, Direction.DOWN), 0, moveSpeed);
                 break;
             case RIGHT:
                 if (grid[gridY][gridX + 1] == Block.SOLID) {
-                    System.out.print("Hit wall!");
+                    //System.out.print("Hit wall!");
                     return;
                 }
-                System.out.println("Moving right!");
+                //System.out.println("Moving right!");
                 p.setDirection(Direction.RIGHT);
                 t = new Timer();
                 t.scheduleAtFixedRate(new MoveAnim(p, Direction.RIGHT), 0, moveSpeed);
                 break;
             case LEFT:
                 if (grid[gridY][gridX - 1] == Block.SOLID) {
-                    System.out.print("Hit wall!");
+                    //System.out.print("Hit wall!");
                     return;
                 }
-                System.out.println("Moving left!");
+                //System.out.println("Moving left!");
                 p.setDirection(Direction.LEFT);
                 t = new Timer();
                 t.scheduleAtFixedRate(new MoveAnim(p, Direction.LEFT), 0, moveSpeed);
@@ -248,13 +249,22 @@ public class Game extends UnicastRemoteObject implements IGame {
                 x = ability.getX();
                 y = ability.getY();
                 Block[][] grid = getGrid();
-
+                
+                int colId = checkCollision(ability);
+                if(colId != -1) {
+                    handleCollision(getPlayer(colId), ability);
+                    destroyed=true;
+                    usedAbilities.remove(ability);
+                    this.cancel();
+                }
+                
                 if (x % 1 == 0 && y % 1 == 0) { //Solid grid position
                     gridX = (int) (ability.getX() / spriteSize);
                     gridY = (int) (ability.getY() / spriteSize);
 
                     switch (direction) {
                         case UP:
+                            
                             if (grid[gridY - 1][gridX] == Block.SOLID) {
                                 destroyed = true;
                             }
@@ -297,6 +307,58 @@ public class Game extends UnicastRemoteObject implements IGame {
         }
     }
 
+    private int checkCollision(Used u) {
+        double x=0;
+        double y=0;
+        try {
+            x = u.getX();
+            y = u.getY();
+        
+            for(Player p : players) {
+                if(p.getX()+8 >= x && p.getX()-8 <= x &&
+                        p.getY()+8 >= y && p.getY()-8<= y && p.getID() != u.getCreatorID()) {
+                    //System.out.println("COL DETECTED");
+                    return p.getID();
+                }
+            }
+        } catch (RemoteException ex) {
+            Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return -1;
+    }
+    
+    private void handleCollision(Player p, Used a) {
+        if(p.damage(a.getDamage())) {
+            System.out.println("Player: " + p.getID() + " has been killed! HP:" + p.getHitpoints());
+            try {
+                playerDeath(p, a.getCreatorID());
+            } catch (RemoteException ex) {
+                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }else {
+            System.out.println("Player: " + p.getID() + " has been damaged! HP:" + p.getHitpoints());
+            String phit;
+            try {
+                phit = "Player " + p.getID() + " has been damaged for " + a.getDamage() + " by " + a.getCreatorID();
+                addMessage(phit);
+            } catch (RemoteException ex) {
+                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    private void addMessage(String message) {
+        messages.add(message);
+    }
+    
+    private void playerDeath(Player p, int killerid) throws RemoteException {
+        String pdeath = "Player " + p.getID() + " has been killed by player: " + this.getPlayer(killerid);
+        addMessage(pdeath);
+        //Code voor death hier?
+    }
+    
     private class MoveAnim extends TimerTask {
 
         private Player p;
