@@ -23,7 +23,7 @@ import java.util.Enumeration;
  */
 public class AmazingServer {
     // Set port number
-    private static final int portNumber = 1098;
+    private static final int portNumber = 1099;
 
     // Set binding name for mEFB
     private static final String bindingName = "gameManager";

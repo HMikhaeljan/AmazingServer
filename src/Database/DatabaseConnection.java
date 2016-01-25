@@ -97,8 +97,8 @@ public class DatabaseConnection {
     }
     
     //get list of all users.
-    //todo
     public List<User> getUsers() throws SQLException {
+       
         Statement st = conn.createStatement();
         ResultSet srs = st.executeQuery("SELECT * FROM User");
         ArrayList<User> userlist = new ArrayList<>();
@@ -125,9 +125,7 @@ public class DatabaseConnection {
       preparedStmt.setString (2, password);
       // execute the preparedstatement
       preparedStmt.execute();
-       
-      conn.close();
-        
+      preparedStmt.close();
     }
 
 }

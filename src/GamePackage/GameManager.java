@@ -20,11 +20,13 @@ import java.util.ArrayList;
 public class GameManager extends UnicastRemoteObject implements IGameManager {
 
     private ArrayList<Game> activeGames;
+    private ArrayList<String> lobbyChat;
     private UserManager umanager;
 
     public GameManager(UserManager umanager) throws RemoteException {
         this.activeGames = new ArrayList<Game>();
         this.umanager = umanager;
+        lobbyChat = new ArrayList();
 
     }
 
@@ -54,6 +56,7 @@ public class GameManager extends UnicastRemoteObject implements IGameManager {
         return (IGame) game;
     }
 
+    @Override
     public IGame joinLobby(int gameid, int userid) {
         Game game = null;
         for (Game g : activeGames) {
@@ -70,6 +73,7 @@ public class GameManager extends UnicastRemoteObject implements IGameManager {
         return (IGame) game;
     }
 
+    @Override
     public ArrayList<IGame> getGames() {
         ArrayList<IGame> igames = new ArrayList<IGame>();
 
@@ -81,17 +85,29 @@ public class GameManager extends UnicastRemoteObject implements IGameManager {
 
     @Override
     public void removeLobby(int gameid) throws RemoteException {
-        Game g= null;
-        
-        for(Game a : activeGames) {
-            if(a.getGameID() == gameid)
+        Game g = null;
+
+        for (Game a : activeGames) {
+            if (a.getGameID() == gameid) {
                 g = a;
+            }
         }
-        
-        if(g == null)
+
+        if (g == null) {
             return;
-        
+        }
+
         activeGames.remove(g);
-        
+
+    }
+
+    @Override
+    public ArrayList<String> loadChat() throws RemoteException {
+        return lobbyChat;
+    }
+
+    @Override
+    public void addToChat(String chat) throws RemoteException {
+        lobbyChat.add(chat);
     }
 }

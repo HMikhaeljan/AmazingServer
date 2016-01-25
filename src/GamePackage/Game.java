@@ -7,7 +7,6 @@ package GamePackage;
 
 import Maze.Maze;
 import Maze.SpawnPoint;
-import amazingsharedproject.Ability;
 import amazingsharedproject.Block;
 import amazingsharedproject.Direction;
 import amazingsharedproject.GameState;
@@ -30,13 +29,15 @@ import javafx.scene.input.KeyCode;
  */
 public class Game extends UnicastRemoteObject implements IGame {
 
-    int curPlayerID=0;
+    int curPlayerID = 0;
     private int gameID;
 
     //GameState:
     private ArrayList<Player> players;
     private ArrayList<Used> usedAbilities;
     private ArrayList<String> messages;
+    private ArrayList<String> gameLobbyChat;
+
     private String gameName;
     private Maze maze;
     private ArrayList<SpawnPoint> spawnpoints;
@@ -57,9 +58,10 @@ public class Game extends UnicastRemoteObject implements IGame {
         this.maze = new Maze(40, 2, 128);
         spawnpoints = maze.getSpawnpoints();
         //maze.printMaze();
-        players = new ArrayList<Player>();
-        usedAbilities = new ArrayList<Used>();
-        messages = new ArrayList<String>();
+        players = new ArrayList<>();
+        usedAbilities = new ArrayList<>();
+        messages = new ArrayList<>();
+        gameLobbyChat = new ArrayList();
     }
 
     private void startGame() {
@@ -120,8 +122,8 @@ public class Game extends UnicastRemoteObject implements IGame {
                     }
                 }
                 if (key == KeyCode.DIGIT1) {
-                    Used u = new Used(curPlayer.getID(), 1+(4*playerRoleID), curPlayer.getX(), curPlayer.getY(), curPlayer.getDirection());
-                    int tempInt = 1+(4*playerRoleID);
+                    Used u = new Used(curPlayer.getID(), 1 + (4 * playerRoleID), curPlayer.getX(), curPlayer.getY(), curPlayer.getDirection());
+                    int tempInt = 1 + (4 * playerRoleID);
                     //System.out.println("Which AbilityID: " + tempInt);
                     usedAbilities.add(u);
                     Timer t = new Timer();
@@ -184,12 +186,24 @@ public class Game extends UnicastRemoteObject implements IGame {
         }
     }
 
+    @Override
     public String getGameName() {
         return gameName;
     }
 
+    @Override
     public void setGameName(String g) {
         gameName = g;
+    }
+
+    @Override
+    public void addToGameChat(String chat) throws RemoteException {
+        gameLobbyChat.add(chat);
+    }
+
+    @Override
+    public ArrayList<String> loadGameChat() throws RemoteException {
+     return gameLobbyChat;
     }
 
     private class AbilityAnim extends TimerTask {
@@ -250,22 +264,22 @@ public class Game extends UnicastRemoteObject implements IGame {
                 x = ability.getX();
                 y = ability.getY();
                 Block[][] grid = getGrid();
-                
+
                 int colId = checkCollision(ability);
-                if(colId != -1) {
+                if (colId != -1) {
                     handleCollision(getPlayer(colId, ""), ability);
-                    destroyed=true;
+                    destroyed = true;
                     usedAbilities.remove(ability);
                     this.cancel();
                 }
-                
+
                 if (x % 1 == 0 && y % 1 == 0) { //Solid grid position
                     gridX = (int) (ability.getX() / spriteSize);
                     gridY = (int) (ability.getY() / spriteSize);
 
                     switch (direction) {
                         case UP:
-                            
+
                             if (grid[gridY - 1][gridX] == Block.SOLID) {
                                 destroyed = true;
                             }
@@ -309,15 +323,15 @@ public class Game extends UnicastRemoteObject implements IGame {
     }
 
     private int checkCollision(Used u) {
-        double x=0;
-        double y=0;
+        double x = 0;
+        double y = 0;
         try {
             x = u.getX();
             y = u.getY();
-        
-            for(Player p : players) {
-                if(p.getX()+8 >= x && p.getX()-8 <= x &&
-                        p.getY()+8 >= y && p.getY()-8<= y && p.getID() != u.getCreatorID()) {
+
+            for (Player p : players) {
+                if (p.getX() + 8 >= x && p.getX() - 8 <= x
+                        && p.getY() + 8 >= y && p.getY() - 8 <= y && p.getID() != u.getCreatorID()) {
                     //System.out.println("COL DETECTED");
                     return p.getID();
                 }
@@ -325,20 +339,20 @@ public class Game extends UnicastRemoteObject implements IGame {
         } catch (RemoteException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return -1;
     }
-    
+
     private void handleCollision(Player p, Used a) {
-        if(p.damage(a.getDamage())) {
+        if (p.damage(a.getDamage())) {
             System.out.println("Player: " + p.getNaam() + " has been killed! HP:" + p.getHitpoints());
             try {
                 playerDeath(p, a.getCreatorID());
             } catch (RemoteException ex) {
                 Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
-        }else {
+
+        } else {
             System.out.println("Player: " + p.getNaam() + " has been damaged! HP:" + p.getHitpoints());
             String phit;
             phit = "Player " + p.getNaam() + " has been damaged for " + a.getDamage();
@@ -346,20 +360,20 @@ public class Game extends UnicastRemoteObject implements IGame {
 
         }
     }
-    
+
     private void addMessage(String message) {
         messages.add(message);
-        if(messages.size() > 5) {
+        if (messages.size() > 5) {
             messages.remove(0);
         }
     }
-    
+
     private void playerDeath(Player p, int killerid) throws RemoteException {
         String pdeath = "Player " + p.getNaam() + " has been killed by player: " + this.getPlayer(killerid, "").getNaam();
         addMessage(pdeath);
         //Code voor death hier?
     }
-    
+
     private class MoveAnim extends TimerTask {
 
         private Player p;
@@ -436,12 +450,13 @@ public class Game extends UnicastRemoteObject implements IGame {
         }
         //System.out.println("Bananen zijn cool");
         p = new Player(userid, getNextPlayerID(), 100, playerRoleID);
-        if(naam.compareTo("") != 0)
+        if (naam.compareTo("") != 0) {
             p.setNaam(naam);
+        }
         players.add(p);
         return p;
     }
-    
+
     private int getNextPlayerID() {
         curPlayerID++;
         return curPlayerID - 1;
@@ -452,6 +467,7 @@ public class Game extends UnicastRemoteObject implements IGame {
         return maze.GetGrid();
     }
 
+    @Override
     public Boolean allPlayersReady() {
         if (readyCounter == players.size() && players.size() > 1) {
             return true;

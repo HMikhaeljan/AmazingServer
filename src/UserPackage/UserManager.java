@@ -39,9 +39,11 @@ public class UserManager extends UnicastRemoteObject implements ILogin {
 
     public UserManager() throws RemoteException, SQLException {
         loadAllUsers();
-       // timer.scheduleAtFixedRate(new reloadUsersFromDB(), start, interval);
+        // timer.scheduleAtFixedRate(new reloadUsersFromDB(), start, interval);
     }
 
+    
+    //wordt nu niet gebruikt
     private class reloadUsersFromDB extends TimerTask {
 
         @Override
@@ -64,12 +66,14 @@ public class UserManager extends UnicastRemoteObject implements ILogin {
         allUsers = tempList;
     }
 
+    @Override
     public List<User> getAllUsers() {
         return allUsers;
     }
 
     //vraag alle online users op
-    public List<User> getOnlineUsers() {
+    @Override
+    public synchronized List<User> getOnlineUsers() {
         return onlineUsers;
     }
 
@@ -82,6 +86,7 @@ public class UserManager extends UnicastRemoteObject implements ILogin {
      * @return true if succesfully added in database.
      * @throws java.sql.SQLException
      */
+    @Override
     public void registerUser(String username, String password) {
         User user = new User(allUsers.size() + 1, username, password, stat);
         allUsers.add(user);
@@ -92,24 +97,25 @@ public class UserManager extends UnicastRemoteObject implements ILogin {
         }
     }
 
-    public void addToOnline(User user) {
+    @Override
+    public synchronized void addToOnline(User user) {
         System.out.println("User added:" + user);
         onlineUsers.add(user);
     }
 
     @Override
-    public void removeFromOnline(User user) {
-        User toRem= null;
-        if (onlineUsers != null) {
-            for (User userOn : onlineUsers) {
+    public synchronized void removeFromOnline(User user) {
+        ArrayList<User> decoyUserList = new ArrayList(onlineUsers);
+
+        if (!decoyUserList.isEmpty()) {
+            for (User userOn : decoyUserList) {
                 if (user.getUserID() == (userOn.getUserID())) {
-                    System.out.println("Online user removed:" + userOn.getUserID());
-                    toRem = userOn;
+
+                    onlineUsers.remove(userOn);
+                    System.out.println("Online user removed:" + userOn.getUserID() + "." + userOn.getName());
                 }
             }
         }
-        if(toRem != null)
-            onlineUsers.remove(toRem);
     }
 
     /**
@@ -118,15 +124,11 @@ public class UserManager extends UnicastRemoteObject implements ILogin {
      * corresponding stats
      *
      * @param username
-     * @param name
      * @param password
      * @return User if account exists otherwise return null.
-     * @throws java.sql.SQLException
      */
     @Override
-    public User Login(String username, String password
-    ) {
-
+    public User Login(String username, String password) {
         try {
             for (User user : db.getUsers()) {
                 if (user.getName().equals(username) && user.getPassword().equals(password)) {
