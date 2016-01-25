@@ -55,18 +55,18 @@ public class ConTest {
         IGame game = gmanager.newLobby(testuser.getUserID());
         //System.out.println(game);
         System.out.println("Game retrieved. UserID:"+ testuser.getUserID() /*+ " -> playerid: " + game.getPlayer(testuser.getUserID()).getID()*/);
-        Player p= game.getPlayer(testuser.getUserID());
+        Player p= game.getPlayer(testuser.getUserID(), "");
         System.out.println("Player retrieved. PlayerID: " + p.getID());
         
         //If you getplayer again with the same id it should return the same player:
-        p = game.getPlayer(testuser.getUserID());
+        p = game.getPlayer(testuser.getUserID(), "");
         System.out.println("Retrieving again, PlayerID: " + p.getID());
         
         User nephovsep = umanager.Login("hovsep", "proftaak");
         System.out.println("User found: " + nephovsep.getName() + " ID:" + nephovsep.getUserID() + " attempting to join lobby..");
         IGame gamehovsep = gmanager.joinLobby(game.getGameID(), nephovsep.getUserID()); // IS THE SAME REFERENCE AS THE FIRST GAME!!
         System.out.println("GameLoby joined. ID: " + gamehovsep.getGameID());
-        Player phovsep = gamehovsep.getPlayer(nephovsep.getUserID());
+        Player phovsep = gamehovsep.getPlayer(nephovsep.getUserID(), "");
         System.out.println("Player retrieved. PlayerID: " + phovsep.getID());
         
         //Testing the ready system
