@@ -117,12 +117,12 @@ public class Game extends UnicastRemoteObject implements IGame {
             }
             if (key.isDigitKey()) {
                 for (Used ua : usedAbilities) {
-                    if (ua.getCreatorID() == curPlayer.getID()) {
+                    if (ua.getCreatorID() == curPlayer.getUserID()) {
                         return;
                     }
                 }
                 if (key == KeyCode.DIGIT1) {
-                    Used u = new Used(curPlayer.getID(), 1 + (4 * playerRoleID), curPlayer.getX(), curPlayer.getY(), curPlayer.getDirection());
+                    Used u = new Used(curPlayer.getUserID(), 1 + (4 * playerRoleID), curPlayer.getX(), curPlayer.getY(), curPlayer.getDirection());
                     int tempInt = 1 + (4 * playerRoleID);
                     //System.out.println("Which AbilityID: " + tempInt);
                     usedAbilities.add(u);
@@ -331,9 +331,9 @@ public class Game extends UnicastRemoteObject implements IGame {
 
             for (Player p : players) {
                 if (p.getX() + 8 >= x && p.getX() - 8 <= x
-                        && p.getY() + 8 >= y && p.getY() - 8 <= y && p.getID() != u.getCreatorID()) {
+                        && p.getY() + 8 >= y && p.getY() - 8 <= y && p.getUserID() != u.getCreatorID()) {
                     //System.out.println("COL DETECTED");
-                    return p.getID();
+                    return p.getUserID();
                 }
             }
         } catch (RemoteException ex) {
@@ -343,7 +343,7 @@ public class Game extends UnicastRemoteObject implements IGame {
         return -1;
     }
 
-    private void handleCollision(Player p, Used a) {
+    private void handleCollision(Player p, Used a) throws RemoteException {
         if (p.damage(a.getDamage())) {
             System.out.println("Player: " + p.getNaam() + " has been killed! HP:" + p.getHitpoints());
             try {
@@ -353,9 +353,11 @@ public class Game extends UnicastRemoteObject implements IGame {
             }
 
         } else {
-            System.out.println("Player: " + p.getNaam() + " has been damaged! HP:" + p.getHitpoints());
+            Player dmger = getPlayer(a.getCreatorID(), "");
+            System.out.println("PlayerID: " + p.getID() + " damaged by: " + dmger.getNaam());
+            System.out.println("Player: " + p.getNaam() + " has been damaged! HP:" + dmger.getNaam());
             String phit;
-            phit = "Player " + p.getNaam() + " has been damaged for " + a.getDamage();
+            phit = "Player " + p.getNaam() + " has been damaged for " + a.getDamage() + " by: " + dmger.getNaam();
             addMessage(phit);
 
         }
@@ -370,6 +372,7 @@ public class Game extends UnicastRemoteObject implements IGame {
 
     private void playerDeath(Player p, int killerid) throws RemoteException {
         String pdeath = "Player " + p.getNaam() + " has been killed by player: " + this.getPlayer(killerid, "").getNaam();
+        getPlayer(killerid, "").killedPlayer();
         addMessage(pdeath);
         //Code voor death hier?
     }
