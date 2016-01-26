@@ -42,7 +42,6 @@ public class UserManager extends UnicastRemoteObject implements ILogin {
         // timer.scheduleAtFixedRate(new reloadUsersFromDB(), start, interval);
     }
 
-    
     //wordt nu niet gebruikt
     private class reloadUsersFromDB extends TimerTask {
 
@@ -92,6 +91,7 @@ public class UserManager extends UnicastRemoteObject implements ILogin {
         allUsers.add(user);
         try {
             db.newUser(username, password);
+            System.out.println(user.getName() + " has registered");
         } catch (SQLException ex) {
             Logger.getLogger(UserManager.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -99,7 +99,7 @@ public class UserManager extends UnicastRemoteObject implements ILogin {
 
     @Override
     public synchronized void addToOnline(User user) {
-        System.out.println("User added:" + user);
+        System.out.println("User" + user.getName() + " has come online");
         onlineUsers.add(user);
     }
 
@@ -112,7 +112,7 @@ public class UserManager extends UnicastRemoteObject implements ILogin {
                 if (user.getUserID() == (userOn.getUserID())) {
 
                     onlineUsers.remove(userOn);
-                    System.out.println("Online user removed:" + userOn.getUserID() + "." + userOn.getName());
+                    System.out.println("User " + userOn.getUserID() + "." + userOn.getName() + " has gone offline");
                 }
             }
         }
@@ -132,12 +132,9 @@ public class UserManager extends UnicastRemoteObject implements ILogin {
         try {
             for (User user : db.getUsers()) {
                 if (user.getName().equals(username) && user.getPassword().equals(password)) {
-
                     System.out.println("User " + user.getName() + " has logged in");
-
                     return user;
                 }
-
             }
         } catch (SQLException ex) {
             Logger.getLogger(UserManager.class.getName()).log(Level.SEVERE, null, ex);
